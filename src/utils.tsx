@@ -1,3 +1,5 @@
+export type data = { name: string; link: string; examples: string[] };
+
 export enum state {
   Player,
   Block,

@@ -1,30 +1,10 @@
 import { useRef, useState } from "react";
 
-/** @todo 다른 레포로 분리하기 */
-const examples = [
-  `3 3
-..X
-...
-...`,
-  `2 2
-.X
-X.`,
-  `10 1
-.
-.
-.
-.
-.
-.
-.
-.
-.
-.`,
-];
-
 export default function SelectInputSideBar({
+  examples,
   onRun,
 }: {
+  examples: string[];
   onRun: (input: string) => void;
 }) {
   const customInputRadio = useRef<HTMLInputElement>(null);
@@ -34,6 +14,12 @@ export default function SelectInputSideBar({
 
   return (
     <aside className="w-1/4 h-full bg-red-200 overflow-y-scroll">
+      <div className="flex flex-row">
+        <a className="px-7 py-3 m-2 bg-blue-500 rounded-lg" href="./?s=">
+          Back
+        </a>
+      </div>
+
       {examples.map((it, idx) => (
         <label className="block p-3 border-b-[1px] border-gray-100" key={idx}>
           <input

@@ -1,87 +1,36 @@
 import { useEffect, useState } from "react";
-import SelectInputSideBar from "./components/SelectInputSideBar";
-import ShowProgressSideBar from "./components/ShowProgressSideBar";
-import { steps, stepNames, parseBoard } from "./data/example1";
-import { board, deepcopyboard, style, text } from "./utils";
+import index from "./assets/index.json";
+import Simulation from "./components/Simulation";
 
 export default function App() {
-  const [isrunning, setIsrunning] = useState(false);
-  const [boardHistory, setBoardHistory] = useState<board[]>([]);
-  const [stepHistory, setStepHistory] = useState<number[]>([]);
-  const [showingBoard, setShowingBoard] = useState<number>(0);
-
-  function onRun(s: string) {
-    setIsrunning(true);
-
-    // 먼저 시뮬레이션을 한다
-    // 1000번 이상 반복할 경우 무한 루프로 판단하고 중지한다.
-    let board = parseBoard(s);
-    const boardHistory: board[] = [deepcopyboard(board)];
-    const stepHistory: number[] = [-1];
-    let step = 0;
-    while (boardHistory.length <= 1000) {
-      const laststep = step;
-      [board, step] = steps[step](board);
-      boardHistory.push(deepcopyboard(board));
-      stepHistory.push(laststep);
-
-      if (step === -1) break;
-    }
-
-    setBoardHistory(boardHistory);
-    setStepHistory(stepHistory);
-  }
-
-  function onStop() {
-    setIsrunning(false);
-  }
-
-  function onKeyDown(e: KeyboardEvent) {
-    if (!isrunning) return;
-    if (e.key === "ArrowLeft") {
-      if (showingBoard !== 0) setShowingBoard((x) => x - 1);
-    } else if (e.key === "ArrowRight") {
-      if (showingBoard !== boardHistory.length - 1)
-        setShowingBoard((x) => x + 1);
-    }
-  }
+  const [filename, setFilename] = useState<string | null>(null);
 
   useEffect(() => {
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  });
+    const urlParams = new URLSearchParams(window.location.search);
+    setFilename(urlParams.get("s"));
+  }, []);
+
+  if (filename) {
+    return (
+      <>
+        <Simulation filename={filename} />
+      </>
+    );
+  }
 
   return (
     <>
-      <div className="h-full flex flex-row bg-black">
-        <main className="flex-auto bg-green-200">
-          {isrunning &&
-            boardHistory[showingBoard].map((line, idx1) => (
-              <div>
-                {line.map((cell, idx2) => (
-                  <div
-                    className={`inline-flex items-center justify-center size-10 border-[1px] border-black ${
-                      style[cell.state]
-                    }`}
-                    key={`${idx1} ${idx2}`}
-                  >
-                    {text[cell.state]}
-                  </div>
-                ))}
-              </div>
-            ))}
-        </main>
-        {isrunning ? (
-          <ShowProgressSideBar
-            history={stepHistory}
-            stepNames={stepNames}
-            selected={showingBoard}
-            onStop={onStop}
-            onClickShow={(idx) => setShowingBoard(idx)}
-          />
-        ) : (
-          <SelectInputSideBar onRun={onRun} />
-        )}
+      <div className="h-full flex flex-col">
+        <h2 className="p-16 font-bold text-5xl text-center">BOJ Visualizer</h2>
+        {Object.entries(index).map(([name, filename]) => (
+          <a
+            href={`./?s=${filename}`}
+            className="p-5 m-5 rounded-md bg-gray-400"
+            key={filename}
+          >
+            {name}
+          </a>
+        ))}
       </div>
     </>
   );
