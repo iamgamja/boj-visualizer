@@ -1,11 +1,12 @@
-function App() {
+import SelectInputSideBar from "./components/SelectInputSideBar";
+
+export default function App() {
   return (
     <>
-      <button className="py-2 px-4 rounded-lg shadow-md text-white bg-green-500 hover:bg-green-700">
-        test
-      </button>
+      <div className="h-full flex flex-row bg-black">
+        <main className="flex-auto bg-green-200"></main>
+        <SelectInputSideBar />
+      </div>
     </>
   );
 }
-
-export default App;
