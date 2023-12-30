@@ -1,11 +1,13 @@
 export default function ShowProgressSideBar({
   history,
   stepNames,
+  selected,
   onStop,
   onClickShow,
 }: {
   history: number[];
   stepNames: string[];
+  selected: number;
   onStop: () => void;
   onClickShow: (idx: number) => void;
 }) {
@@ -22,7 +24,9 @@ export default function ShowProgressSideBar({
 
       {history.map((step, idx) => (
         <div
-          className="block p-3 border-b-[1px] border-gray-100"
+          className={`block p-3 border-b-[1px] border-gray-100 hover:bg-red-300 ${
+            idx === selected ? "bg-slate-200 hover:bg-slate-200" : ""
+          }`}
           key={idx}
           onClick={() => onClickShow(idx)}
         >

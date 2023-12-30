@@ -84,6 +84,7 @@ export default function App() {
           <ShowProgressSideBar
             history={stepHistory}
             stepNames={stepNames}
+            selected={showingBoard}
             onStop={onStop}
             onClickShow={(idx) => setShowingBoard(idx)}
           />
