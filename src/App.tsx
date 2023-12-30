@@ -50,13 +50,35 @@ export default function App() {
     setIsrunning(false);
   }
 
-  console.log(showingBoard);
-
   return (
     <>
       <div className="h-full flex flex-row bg-black">
         <main className="flex-auto bg-green-200">
-          {isrunning ? boardHistory[showingBoard].toString() : null}
+          {isrunning &&
+            boardHistory[showingBoard].map((line) => (
+              <div>
+                {line.map((cell) => {
+                  if (cell.state === state.Player)
+                    return (
+                      <div className="inline-flex items-center justify-center size-10 border-[1px] border-black bg-red-300">
+                        P
+                      </div>
+                    );
+                  else if (cell.state === state.Empty)
+                    return (
+                      <div className="inline-flex items-center justify-center size-10 border-[1px] border-black ">
+                        .
+                      </div>
+                    );
+                  else
+                    return (
+                      <div className="inline-flex items-center justify-center size-10 border-[1px] border-black bg-gray-800 text-white">
+                        X
+                      </div>
+                    );
+                })}
+              </div>
+            ))}
         </main>
         {isrunning ? (
           <ShowProgressSideBar
