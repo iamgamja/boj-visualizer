@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SelectInputSideBar from "./components/SelectInputSideBar";
 import ShowProgressSideBar from "./components/ShowProgressSideBar";
 
@@ -49,6 +49,21 @@ export default function App() {
   function onStop() {
     setIsrunning(false);
   }
+
+  function onKeyDown(e: KeyboardEvent) {
+    if (!isrunning) return;
+    if (e.key === "ArrowLeft") {
+      if (showingBoard !== 0) setShowingBoard((x) => x - 1);
+    } else if (e.key === "ArrowRight") {
+      if (showingBoard !== boardHistory.length - 1)
+        setShowingBoard((x) => x + 1);
+    }
+  }
+
+  useEffect(() => {
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  });
 
   return (
     <>
