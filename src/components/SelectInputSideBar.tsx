@@ -18,11 +18,8 @@ X.`,
 .
 .
 .
-l
-l
-l
 .
-`,
+.`,
 ];
 
 export default function SelectInputSideBar({
