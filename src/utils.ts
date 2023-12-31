@@ -1,6 +1,7 @@
 export enum state {
   Player,
   Block,
+  Item,
   Empty,
 }
 
@@ -58,10 +59,27 @@ export class Cell {
     if (this.state !== state.Player) throw new Error("Not player");
     if (!this.canmove(y, x)) throw new Error("Can't move");
 
-    this.state = state.Empty;
-    this.board[y][x].state = state.Player;
+    this.board[this.y][this.x] = new Cell(
+      this.y,
+      this.x,
+      state.Empty,
+      this.board[y][x].value,
+      this.board,
+      this.N,
+      this.M
+    );
 
-    if (cb) cb(this, this.board[y][x]);
+    this.board[y][x] = new Cell(
+      y,
+      x,
+      state.Player,
+      this.value,
+      this.board,
+      this.N,
+      this.M
+    );
+
+    if (cb) cb(this.board[this.y][this.x], this.board[y][x]);
   }
 }
 

@@ -36,6 +36,7 @@ npm run dev
   - `enum state`: 각 칸의 상태를 나타내는 enum입니다.
     - `Player`
     - `Block`
+    - `Item`
     - `Empty`
   - `Cell(y, x, state, value, board, N, M)`: 각 칸을 나타내는 클래스입니다. 다음 멤버 변수와 메서드에 접근할 수 있습니다.
     - `y: number`, `x: number`: 위에서 `y`번째, 왼쪽에서 `x`번째의 칸임을 나타냅니다. (0-index)

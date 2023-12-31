@@ -28,8 +28,7 @@ export const steps: stepstype = [
     while (q.length) {
       const [y, x] = q.shift()!;
       if (
-        board[y][x].state !== state.Player &&
-        0 < board[y][x].value.size &&
+        board[y][x].state === state.Item &&
         board[y][x].value.size < player.value.size
       ) {
         player.value.exp++;
@@ -38,9 +37,15 @@ export const steps: stepstype = [
           player.value.exp = 0;
         }
 
-        board[y][x] = player;
-        board[y][x].y = y;
-        board[y][x].x = x;
+        board[y][x] = new Cell(
+          y,
+          x,
+          state.Player,
+          player.value,
+          board,
+          player.N,
+          player.N
+        );
 
         board[player_y][player_x] = new Cell(
           player_y,
@@ -113,7 +118,7 @@ export function parseBoard(s: string): board {
         board[y][x] = new Cell(
           y,
           x,
-          state.Empty,
+          state.Item,
           { size: +remain[y].split(" ")[x] },
           board,
           N,
