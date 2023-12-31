@@ -8,7 +8,8 @@ const modules = import.meta.glob("./data/*.{ts,js}", { eager: true }) as Record<
 >; // path: simulation
 
 export default function App() {
-  const [name, setName] = useState<string | null>(null);
+  const [name, setName] = useState<string | null>();
+  console.log(name);
   const simulations = useRef<Record<string, simulation>>({}); // name: simulation
 
   useEffect(() => {
