@@ -46,12 +46,14 @@ export class Cell {
     return true;
   }
 
-  move(y: number, x: number) {
+  move(y: number, x: number, cb?: (now: Cell, next: Cell) => void) {
     if (this.state !== state.Player) throw new Error("Not player");
     if (!this.canmove(y, x)) throw new Error("Can't move");
 
     this.state = state.Empty;
     this.board[y][x].state = state.Player;
+
+    if (cb) cb(this, this.board[y][x]);
   }
 }
 

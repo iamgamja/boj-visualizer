@@ -45,9 +45,10 @@ npm run dev
     - `N: number`, `M: number`: board가 `N`행 `M`열임을 나타냅니다.
     - `canmove(y: number, x: number): boolean`: `(y, x)`로 이동할 수 있는지 여부를 반환합니다.
       - 이 칸과 `(y, x)`가 상하좌우로 인접하며, `(y, x)`의 state가 `Block`이 아니어야 합니다.
-    - `move(y: number, x: number)`: `(y, x)`로 이동합니다.
+    - `move(y: number, x: number, cb?: (now: Cell, next: Cell) => void)`: `(y, x)`로 이동합니다.
       - 이 칸의 state가 `Player`이어야 하며, `(y, x)`로 이동 가능해야 합니다.
       - 이 칸의 state를 `Empty`로 하고 `(y, x)`의 state를 `Player`으로 합니다.
+      - `cb`가 주어졌다면, `cb(이 칸, 이동한 칸)`을 호출합니다.
   - `deepcopy(board: board): board`: board를 깊은 복사하여 반환합니다.
   - `getPlayer(board): [y: number, x: number]`: state가 `Player`인 칸의 좌표를 반환합니다.
   - `type board = Cell[][]`
