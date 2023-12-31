@@ -55,10 +55,10 @@ export function parseBoard(s: string): board {
   for (let y = 0; y < N; y++) {
     for (let x = 0; x < M; x++) {
       if (y == 0 && x == 0)
-        board[y][x] = new Cell(y, x, state.Player, board, N, M);
+        board[y][x] = new Cell(y, x, state.Player, null, board, N, M);
       else if (remain[y][x] == ".")
-        board[y][x] = new Cell(y, x, state.Empty, board, N, M);
-      else board[y][x] = new Cell(y, x, state.Block, board, N, M);
+        board[y][x] = new Cell(y, x, state.Empty, null, board, N, M);
+      else board[y][x] = new Cell(y, x, state.Block, null, board, N, M);
     }
   }
 
