@@ -1,14 +1,8 @@
 import { useEffect, useState } from "react";
 import SelectInputSideBar from "./SelectInputSideBar";
 import ShowProgressSideBar from "./ShowProgressSideBar";
-import {
-  board,
-  datatype,
-  deepcopyboard,
-  stepstype,
-  style,
-  text,
-} from "../utils";
+import { board, datatype, deepcopyboard, stepstype } from "../utils";
+import { style, text } from "../constants/const";
 
 export default function Simulation({
   data,

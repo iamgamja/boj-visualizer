@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import Simulation from "./components/Simulation";
-import { simulation } from "./utils";
+import { simulation } from "./constants/const";
 
 const modules = import.meta.glob("./data/*.{ts,js}", { eager: true }) as Record<
   string,
