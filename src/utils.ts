@@ -40,7 +40,9 @@ export class Cell {
     if (
       !(
         (this.y === y && this.x + 1 === x) ||
-        (this.y + 1 === y && this.x === x)
+        (this.y === y && this.x - 1 === x) ||
+        (this.y + 1 === y && this.x === x) ||
+        (this.y - 1 === y && this.x === x)
       )
     )
       return false;
