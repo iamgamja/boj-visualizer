@@ -55,7 +55,7 @@ export default function SelectInputSideBar({
       <div className="flex flex-row-reverse">
         <button
           className="px-7 py-3 m-2 bg-blue-500 rounded-lg"
-          onClick={() => onRun(input)}
+          onClick={() => input && onRun(input)} // input이 존재할 때만 실행
         >
           Run
         </button>
