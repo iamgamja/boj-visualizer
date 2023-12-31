@@ -43,8 +43,9 @@ npm run dev
     - `value: any`: 이 칸에 다른 상태를 지정하려면 이 변수를 사용할 수 있습니다. (예시: 가중치 등)
     - `board: board`: 전체 board의 참조입니다.
     - `N: number`, `M: number`: board가 `N`행 `M`열임을 나타냅니다.
-    - `canmove(y: number, x: number): boolean`: `(y, x)`로 이동할 수 있는지 여부를 반환합니다.
+    - `canmove(y: number, x: number, c?: (now: Cell, next: Cell) => boolean): boolean`: `(y, x)`로 이동할 수 있는지 여부를 반환합니다.
       - 이 칸과 `(y, x)`가 상하좌우로 인접하며, `(y, x)`의 state가 `Block`이 아니어야 합니다.
+      - `c`가 주어졌다면, 추가로 `c(이 칸, 이동한 칸)`을 만족해야 합니다.
     - `move(y: number, x: number, cb?: (now: Cell, next: Cell) => void)`: `(y, x)`로 이동합니다.
       - 이 칸의 state가 `Player`이어야 하며, `(y, x)`로 이동 가능해야 합니다.
       - 이 칸의 state를 `Empty`로 하고 `(y, x)`의 state를 `Player`으로 합니다.

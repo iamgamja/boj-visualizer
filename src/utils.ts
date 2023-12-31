@@ -32,7 +32,11 @@ export class Cell {
     this.M = M;
   }
 
-  canmove(y: number, x: number): boolean {
+  canmove(
+    y: number,
+    x: number,
+    c?: (now: Cell, next: Cell) => boolean
+  ): boolean {
     if (
       !(
         (this.y === y && this.x + 1 === x) ||
@@ -43,6 +47,8 @@ export class Cell {
     if (!(0 <= y && y < this.N)) return false;
     if (!(0 <= x && x < this.M)) return false;
     if (this.board[y][x].state === state.Block) return false;
+
+    if (c) return c(this, this.board[y][x]);
     return true;
   }
 
