@@ -28,6 +28,7 @@ export default function Simulation({
 
   function onRun(s: string) {
     setIsrunning(true);
+    setShowingBoard(0);
 
     // 먼저 시뮬레이션을 한다
     // 1000번 이상 반복할 경우 무한 루프로 판단하고 중지한다.
