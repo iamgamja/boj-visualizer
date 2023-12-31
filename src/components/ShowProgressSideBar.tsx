@@ -30,7 +30,11 @@ export default function ShowProgressSideBar({
           key={idx}
           onClick={() => onClickShow(idx)}
         >
-          {step !== -1 ? stepNames[step] : "init"}
+          {step === -1
+            ? "init"
+            : idx === history.length - 1
+            ? `${stepNames[step]} (end)`
+            : stepNames[step]}
         </div>
       ))}
     </aside>
