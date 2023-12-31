@@ -11,6 +11,7 @@ export class Cell {
   state: state;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   value: any;
+  text: string | null;
   board: board;
   N: number;
   M: number;
@@ -20,6 +21,7 @@ export class Cell {
     state: state,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     value: any,
+    text: string | null,
     board: board,
     N: number,
     M: number
@@ -28,6 +30,7 @@ export class Cell {
     this.x = x;
     this.state = state;
     this.value = value;
+    this.text = text;
     this.board = board;
     this.N = N;
     this.M = M;
@@ -64,6 +67,7 @@ export class Cell {
       this.x,
       state.Empty,
       this.board[y][x].value,
+      this.board[y][x].text,
       this.board,
       this.N,
       this.M
@@ -74,6 +78,7 @@ export class Cell {
       x,
       state.Player,
       this.value,
+      this.text,
       this.board,
       this.N,
       this.M
@@ -100,6 +105,7 @@ export function deepcopyboard(board: board): board {
         t.x,
         t.state,
         deepcopyobject(t.value),
+        t.text,
         t.board,
         t.N,
         t.M

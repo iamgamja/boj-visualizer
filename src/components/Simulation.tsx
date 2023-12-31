@@ -76,7 +76,7 @@ export default function Simulation({
                     }`}
                     key={`${idx1} ${idx2}`}
                   >
-                    {text[cell.state]}
+                    {cell.text ?? text[cell.state]}
                   </div>
                 ))}
               </div>

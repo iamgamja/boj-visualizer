@@ -37,25 +37,29 @@ export const steps: stepstype = [
           player.value.exp = 0;
         }
 
-        board[y][x] = new Cell(
-          y,
-          x,
-          state.Player,
-          player.value,
-          board,
-          player.N,
-          player.N
-        );
+        [board[y][x], board[player_y][player_x]] = [
+          new Cell(
+            y,
+            x,
+            state.Player,
+            player.value,
+            player.text,
+            board,
+            player.N,
+            player.N
+          ),
 
-        board[player_y][player_x] = new Cell(
-          player_y,
-          player_x,
-          state.Empty,
-          { size: 0 },
-          board,
-          player.N,
-          player.N
-        );
+          (board[player_y][player_x] = new Cell(
+            player_y,
+            player_x,
+            state.Empty,
+            { size: 0 },
+            null,
+            board,
+            player.N,
+            player.N
+          )),
+        ];
 
         flag = true;
 
@@ -108,18 +112,29 @@ export function parseBoard(s: string): board {
           x,
           state.Player,
           { size: 2, exp: 0 },
+          null,
           board,
           N,
           N
         );
       else if (+remain[y].split(" ")[x] === 0)
-        board[y][x] = new Cell(y, x, state.Empty, { size: 0 }, board, N, N);
+        board[y][x] = new Cell(
+          y,
+          x,
+          state.Empty,
+          { size: 0 },
+          null,
+          board,
+          N,
+          N
+        );
       else
         board[y][x] = new Cell(
           y,
           x,
           state.Item,
           { size: +remain[y].split(" ")[x] },
+          remain[y].split(" ")[x],
           board,
           N,
           N

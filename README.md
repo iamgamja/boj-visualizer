@@ -38,10 +38,11 @@ npm run dev
     - `Block`
     - `Item`
     - `Empty`
-  - `Cell(y, x, state, value, board, N, M)`: 각 칸을 나타내는 클래스입니다. 다음 멤버 변수와 메서드에 접근할 수 있습니다.
+  - `Cell(y, x, state, value, text, board, N, M)`: 각 칸을 나타내는 클래스입니다. 다음 멤버 변수와 메서드에 접근할 수 있습니다.
     - `y: number`, `x: number`: 위에서 `y`번째, 왼쪽에서 `x`번째의 칸임을 나타냅니다. (0-index)
     - `state: state`: 이 칸의 상태입니다.
     - `value: any`: 이 칸에 다른 상태를 지정하려면 이 변수를 사용할 수 있습니다. (예시: 가중치 등)
+    - `text: string | null`: 이 칸에 적힐 글자입니다. `null`이면 기본값을 사용합니다.
     - `board: board`: 전체 board의 참조입니다.
     - `N: number`, `M: number`: board가 `N`행 `M`열임을 나타냅니다.
     - `canmove(y: number, x: number, c?: (now: Cell, next: Cell) => boolean): boolean`: `(y, x)`로 이동할 수 있는지 여부를 반환합니다.
