@@ -68,29 +68,12 @@ export const steps: stepstype = [
           player.value.exp = 0;
         }
 
-        [board[y][x], board[player_y][player_x]] = [
-          new Cell(
-            y,
-            x,
-            state.Player,
-            player.value,
-            player.text,
-            board,
-            player.N,
-            player.N
-          ),
-
-          (board[player_y][player_x] = new Cell(
-            player_y,
-            player_x,
-            state.Empty,
-            { size: 0 },
-            null,
-            board,
-            player.N,
-            player.N
-          )),
-        ];
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        player.move(y, x, (prev, _) => {
+          prev.state = state.Empty;
+          prev.value = { size: 0 };
+          prev.text = null;
+        });
 
         flag = true;
 

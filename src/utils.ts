@@ -58,14 +58,13 @@ export class Cell {
     return true;
   }
 
-  move(y: number, x: number, cb?: (now: Cell, next: Cell) => void) {
+  move(y: number, x: number, cb?: (prev: Cell, now: Cell) => void) {
     if (this.state !== state.Player) throw new Error("Not player");
-    if (!this.canmove(y, x)) throw new Error("Can't move");
 
     this.board[this.y][this.x] = new Cell(
       this.y,
       this.x,
-      state.Empty,
+      this.board[y][x].state,
       this.board[y][x].value,
       this.board[y][x].text,
       this.board,
@@ -76,7 +75,7 @@ export class Cell {
     this.board[y][x] = new Cell(
       y,
       x,
-      state.Player,
+      this.state,
       this.value,
       this.text,
       this.board,
