@@ -1,4 +1,4 @@
-export type data = { name: string; link: string; examples: string[] };
+export type datatype = { name: string; link: string; examples: string[] };
 
 export enum state {
   Player,
@@ -94,3 +94,10 @@ export function getPlayer(board: board): [y: number, x: number] {
 
   throw new Error("unreachable");
 }
+
+export type simulation = {
+  data: datatype;
+  steps: stepstype;
+  stepNames: string[];
+  parseBoard: (s: string) => board;
+};

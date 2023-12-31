@@ -1,56 +1,43 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import SelectInputSideBar from "./SelectInputSideBar";
 import ShowProgressSideBar from "./ShowProgressSideBar";
-import { board, data, deepcopyboard, stepstype, style, text } from "../utils";
+import {
+  board,
+  datatype,
+  deepcopyboard,
+  stepstype,
+  style,
+  text,
+} from "../utils";
 
-export default function Simulation({ filename }: { filename: string }) {
-  const [isloading, setIsloading] = useState(true);
-
+export default function Simulation({
+  data,
+  steps,
+  stepNames,
+  parseBoard,
+}: {
+  data: datatype;
+  steps: stepstype;
+  stepNames: string[];
+  parseBoard: (s: string) => board;
+}) {
   const [isrunning, setIsrunning] = useState(false);
   const [boardHistory, setBoardHistory] = useState<board[]>([]);
   const [stepHistory, setStepHistory] = useState<number[]>([]);
   const [showingBoard, setShowingBoard] = useState<number>(0);
-
-  const data = useRef<data>();
-  const steps = useRef<stepstype>();
-  const stepNames = useRef<string[]>();
-  const parseBoard = useRef<(s: string) => board>();
-
-  useEffect(() => {
-    (async () => {
-      const {
-        data: data_,
-        steps: steps_,
-        stepNames: stepNames_,
-        parseBoard: parseBoard_,
-      }: {
-        data: data;
-        steps: stepstype;
-        stepNames: string[];
-        parseBoard: (s: string) => board;
-      } = await import(/* @vite-ignore */ `../data/${filename}`);
-
-      data.current = data_;
-      steps.current = steps_;
-      stepNames.current = stepNames_;
-      parseBoard.current = parseBoard_;
-
-      setIsloading(false);
-    })();
-  });
 
   function onRun(s: string) {
     setIsrunning(true);
 
     // 먼저 시뮬레이션을 한다
     // 1000번 이상 반복할 경우 무한 루프로 판단하고 중지한다.
-    let board = parseBoard.current!(s);
+    let board = parseBoard(s);
     const boardHistory: board[] = [deepcopyboard(board)];
     const stepHistory: number[] = [-1];
     let step = 0;
     while (boardHistory.length <= 1000) {
       const laststep = step;
-      [board, step] = steps.current![step](board);
+      [board, step] = steps[step](board);
       boardHistory.push(deepcopyboard(board));
       stepHistory.push(laststep);
 
@@ -100,16 +87,16 @@ export default function Simulation({ filename }: { filename: string }) {
               </div>
             ))}
         </main>
-        {isloading ? null : isrunning ? (
+        {isrunning ? (
           <ShowProgressSideBar
             history={stepHistory}
-            stepNames={stepNames.current!}
+            stepNames={stepNames}
             selected={showingBoard}
             onStop={onStop}
             onClickShow={(idx) => setShowingBoard(idx)}
           />
         ) : (
-          <SelectInputSideBar examples={data.current!.examples} onRun={onRun} />
+          <SelectInputSideBar examples={data.examples} onRun={onRun} />
         )}
       </div>
     </>

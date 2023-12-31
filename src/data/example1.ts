@@ -1,4 +1,4 @@
-import { Cell, getPlayer, state, board, stepstype } from "../utils";
+import { Cell, getPlayer, state, board, stepstype, datatype } from "../utils";
 
 /*
 다음과 같은 문제를 구현한다:
@@ -16,7 +16,7 @@ N*M 크기의 격자가 주어진다. 각 칸은 비어있거나(.) 막혀있다
 왼쪽 위 칸은 항상 `.`이다.
 */
 
-export const data = {
+export const data: datatype = {
   name: "Example 1",
   link: "https://example.com",
   examples: [

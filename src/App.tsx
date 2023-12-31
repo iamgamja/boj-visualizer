@@ -1,19 +1,34 @@
-import { useEffect, useState } from "react";
-import index from "./assets/index.json";
+import { useEffect, useRef, useState } from "react";
 import Simulation from "./components/Simulation";
+import { simulation } from "./utils";
+
+const modules = import.meta.glob("./data/*.{ts,js}", { eager: true }) as Record<
+  string,
+  simulation
+>; // path: simulation
 
 export default function App() {
-  const [filename, setFilename] = useState<string | null>(null);
+  const [name, setName] = useState<string | null>(null);
+  const simulations = useRef<Record<string, simulation>>({}); // name: simulation
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
-    setFilename(urlParams.get("s"));
+    setName(urlParams.get("s"));
+
+    Object.values(modules).forEach((module) => {
+      simulations.current[module.data.name] = module;
+    });
   }, []);
 
-  if (filename) {
+  if (name && name in simulations.current) {
     return (
       <>
-        <Simulation filename={filename} />
+        <Simulation
+          data={simulations.current[name].data}
+          steps={simulations.current[name].steps}
+          stepNames={simulations.current[name].stepNames}
+          parseBoard={simulations.current[name].parseBoard}
+        />
       </>
     );
   }
@@ -22,11 +37,11 @@ export default function App() {
     <>
       <div className="h-full flex flex-col">
         <h2 className="p-16 font-bold text-5xl text-center">BOJ Visualizer</h2>
-        {Object.entries(index).map(([name, filename]) => (
+        {Object.keys(simulations.current).map((name) => (
           <a
-            href={`./?s=${filename}`}
+            href={`./?s=${name}`}
             className="p-5 m-5 rounded-md bg-gray-400"
-            key={filename}
+            key={name}
           >
             {name}
           </a>
