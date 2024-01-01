@@ -42,11 +42,12 @@ npm run dev
   - `Cell(state, {value, text}?)`: 각 칸을 나타내는 클래스입니다.
     - `state: state`: 이 칸의 상태입니다.
     - `value: any`: 이 칸에 다른 상태를 지정하려면 이 변수를 사용할 수 있습니다. (예시: 가중치 등)
-    - `text: string | null`: 이 칸에 적힐 글자입니다. `null`이면 기본값을 사용합니다.
+    - `text: string`: 이 칸에 적힐 문자열입니다.
     - `copy()`: 복사본을 반환합니다.
-  - `Board(N, M, {value}?)`: 전체 격자를 나타내는 클래스입니다.
+  - `Board(N, M, {value, text}?)`: 전체 격자를 나타내는 클래스입니다.
     - `N: number`, `M: number`: 격자가 `N`행 `M`열임을 나타냅니다.
     - `value: any`: 전체 격자에 다른 상태를 지정하려면 이 변수를 사용할 수 있습니다. (예시: 플레이어가 획득한 아이템 등)
+    - `text: (board: Board) => string`: 시뮬레이션 중 보일 문자열을 반환하는 함수입니다.
     - `grid: Cell[][]`: `N`행 `M`열의 2차원 Array입니다. **parseBoard 함수에서 초기화해야 합니다.**
     - `player: {y: number, x: number}`: 플레이어의 위치입니다. **parseBoard 함수에서 초기화해야 합니다.**
     - `playerCell`: `grid[player.y][player.x]`의 별칭입니다.

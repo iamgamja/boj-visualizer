@@ -52,13 +52,22 @@ export class Board {
   grid: Cell[][];
   player: { y: number; x: number };
   target: { y: number; x: number } | null;
+  text: (board: Board) => string;
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  constructor(N: number, M: number, { value }: { value?: any } = {}) {
+  constructor(
+    N: number,
+    M: number,
+    {
+      value,
+      text = () => "",
+    }: // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    { value?: any; text?: (board: Board) => string } = {}
+  ) {
     this.N = N;
     this.M = M;
 
     this.value = value;
+    this.text = text;
 
     this.grid = Array(N)
       .fill([])
@@ -204,7 +213,10 @@ export class Board {
   }
 
   copy() {
-    const res = new Board(this.N, this.M, this.value);
+    const res = new Board(this.N, this.M, {
+      value: deepcopyobject(this.value),
+      text: this.text,
+    });
 
     for (let y = 0; y < this.N; y++) {
       for (let x = 0; x < this.M; x++) {

@@ -20,6 +20,7 @@ export default function Simulation({
   const [boardHistory, setBoardHistory] = useState<Board[]>([]);
   const [stepHistory, setStepHistory] = useState<number[]>([]);
   const [showingBoard, setShowingBoard] = useState<number>(0);
+  const [log, setLog] = useState("");
 
   function onRun(s: string) {
     setIsrunning(true);
@@ -63,10 +64,16 @@ export default function Simulation({
     return () => window.removeEventListener("keydown", onKeyDown);
   });
 
+  useEffect(() => {
+    if (isrunning) {
+      setLog(boardHistory[showingBoard].text(boardHistory[showingBoard]));
+    }
+  }, [isrunning, boardHistory, showingBoard]);
+
   return (
     <>
       <div className="h-full flex flex-row">
-        <main className="flex-auto bg-green-200">
+        <main className="relative flex-auto bg-green-200">
           {isrunning &&
             boardHistory[showingBoard].grid.map((line, y) => (
               <div key={y}>
@@ -96,6 +103,12 @@ export default function Simulation({
                 ))}
               </div>
             ))}
+
+          {isrunning && (
+            <div className="absolute right-0 top-0">
+              <pre>{log}</pre>
+            </div>
+          )}
         </main>
 
         {isrunning ? (

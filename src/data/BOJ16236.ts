@@ -105,7 +105,10 @@ export function parseBoard(s: string): Board {
   const [first, ...remain] = s.split("\n").map((s) => s.split(" ").map(Number));
   const [N] = first;
 
-  const board = new Board(N, N, { value: { size: 2, exp: 0 } });
+  const board = new Board(N, N, {
+    value: { size: 2, exp: 0 },
+    text: (board) => `size: ${board.value.size}\nexp: ${board.value.exp}`,
+  });
 
   for (let y = 0; y < N; y++) {
     for (let x = 0; x < N; x++) {
