@@ -1,4 +1,4 @@
-import { Cell, getPlayer, state, board, stepstype, datatype } from "../utils";
+import { Cell, getPlayer, State, board, stepstype, datatype } from "../utils";
 
 export const data: datatype = {
   name: "BOJ 16236 - 아기 상어",
@@ -59,7 +59,7 @@ export const steps: stepstype = [
     while (q.length) {
       const [y, x] = q.shift()!;
       if (
-        board[y][x].state === state.Item &&
+        board[y][x].state === State.Item &&
         board[y][x].value.size < player.value.size
       ) {
         player.value.exp++;
@@ -70,7 +70,7 @@ export const steps: stepstype = [
 
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         player.move(y, x, (prev, _) => {
-          prev.state = state.Empty;
+          prev.state = State.Empty;
           prev.value = { size: 0 };
           prev.text = null;
         });
@@ -124,7 +124,7 @@ export function parseBoard(s: string): board {
         board[y][x] = new Cell(
           y,
           x,
-          state.Player,
+          State.Player,
           { size: 2, exp: 0 },
           null,
           board,
@@ -135,7 +135,7 @@ export function parseBoard(s: string): board {
         board[y][x] = new Cell(
           y,
           x,
-          state.Empty,
+          State.Empty,
           { size: 0 },
           null,
           board,
@@ -146,7 +146,7 @@ export function parseBoard(s: string): board {
         board[y][x] = new Cell(
           y,
           x,
-          state.Item,
+          State.Item,
           { size: +remain[y].split(" ")[x] },
           remain[y].split(" ")[x],
           board,

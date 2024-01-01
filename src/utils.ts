@@ -1,4 +1,4 @@
-export enum state {
+export enum State {
   Player,
   Block,
   Item,
@@ -8,7 +8,7 @@ export enum state {
 export class Cell {
   y: number;
   x: number;
-  state: state;
+  state: State;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   value: any;
   text: string | null;
@@ -18,7 +18,7 @@ export class Cell {
   constructor(
     y: number,
     x: number,
-    state: state,
+    state: State,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     value: any,
     text: string | null,
@@ -52,14 +52,14 @@ export class Cell {
       return false;
     if (!(0 <= y && y < this.N)) return false;
     if (!(0 <= x && x < this.M)) return false;
-    if (this.board[y][x].state === state.Block) return false;
+    if (this.board[y][x].state === State.Block) return false;
 
     if (c) return c(this, this.board[y][x]);
     return true;
   }
 
   move(y: number, x: number, cb?: (prev: Cell, now: Cell) => void) {
-    if (this.state !== state.Player) throw new Error("Not player");
+    if (this.state !== State.Player) throw new Error("Not player");
 
     this.board[this.y][this.x] = new Cell(
       this.y,
@@ -131,7 +131,7 @@ function deepcopyobject(obj: any): any {
 export function getPlayer(board: board): [y: number, x: number] {
   for (let y = 0; y < board.length; y++) {
     for (let x = 0; x < board[0].length; x++) {
-      if (board[y][x].state === state.Player) {
+      if (board[y][x].state === State.Player) {
         return [y, x];
       }
     }

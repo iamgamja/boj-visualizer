@@ -1,4 +1,4 @@
-import { Cell, getPlayer, state, board, stepstype, datatype } from "../utils";
+import { Cell, getPlayer, State, board, stepstype, datatype } from "../utils";
 
 /*
 다음과 같은 문제를 구현한다:
@@ -55,10 +55,10 @@ export function parseBoard(s: string): board {
   for (let y = 0; y < N; y++) {
     for (let x = 0; x < M; x++) {
       if (y == 0 && x == 0)
-        board[y][x] = new Cell(y, x, state.Player, null, null, board, N, M);
+        board[y][x] = new Cell(y, x, State.Player, null, null, board, N, M);
       else if (remain[y][x] == ".")
-        board[y][x] = new Cell(y, x, state.Empty, null, null, board, N, M);
-      else board[y][x] = new Cell(y, x, state.Block, null, null, board, N, M);
+        board[y][x] = new Cell(y, x, State.Empty, null, null, board, N, M);
+      else board[y][x] = new Cell(y, x, State.Block, null, null, board, N, M);
     }
   }
 
