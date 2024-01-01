@@ -68,7 +68,7 @@ export default function Simulation({
         <main className="flex-auto bg-green-200">
           {isrunning &&
             boardHistory[showingBoard].grid.map((line, y) => (
-              <div>
+              <div key={y}>
                 {line.map((cell, x) => (
                   <div
                     className={`inline-flex items-center justify-center size-10 border-[1px] border-black ${
