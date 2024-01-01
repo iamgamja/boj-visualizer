@@ -1,4 +1,4 @@
-import { Cell, getPlayer, state, board, stepstype, datatype } from "../utils";
+import { Cell, State, Board, stepstype, datatype, Direction } from "../utils";
 
 /*
 다음과 같은 문제를 구현한다:
@@ -27,16 +27,14 @@ export const data: datatype = {
 };
 
 export const steps: stepstype = [
-  function (board: board): [board, number] {
-    const [y, x] = getPlayer(board);
-
-    if (board[y][x].canmove(y, x + 1)) {
-      board[y][x].move(y, x + 1);
+  function (board) {
+    if (board.canmove(Direction.Right)) {
+      board.move(Direction.Right);
       return [board, 0];
     }
 
-    if (board[y][x].canmove(y + 1, x)) {
-      board[y][x].move(y + 1, x);
+    if (board.canmove(Direction.Down)) {
+      board.move(Direction.Down);
       return [board, 0];
     }
 
@@ -46,19 +44,23 @@ export const steps: stepstype = [
 
 export const stepNames = ["이동"];
 
-export function parseBoard(s: string): board {
+export function parseBoard(s: string): Board {
   const [first, ...remain] = s.split("\n");
   const [N, M] = first.split(" ").map(Number);
 
-  const board: board = new Array(N).fill([]).map(() => new Array(M));
+  const board = new Board(N, M);
 
   for (let y = 0; y < N; y++) {
     for (let x = 0; x < M; x++) {
-      if (y == 0 && x == 0)
-        board[y][x] = new Cell(y, x, state.Player, null, null, board, N, M);
-      else if (remain[y][x] == ".")
-        board[y][x] = new Cell(y, x, state.Empty, null, null, board, N, M);
-      else board[y][x] = new Cell(y, x, state.Block, null, null, board, N, M);
+      if (y == 0 && x == 0) {
+        board.grid[y][x] = new Cell(State.Empty);
+        board.player = { y, x };
+      } else if (remain[y][x] == ".") {
+        board.grid[y][x] = new Cell(State.Empty);
+      } else {
+        // X
+        board.grid[y][x] = new Cell(State.Block);
+      }
     }
   }
 

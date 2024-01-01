@@ -1,119 +1,224 @@
-export enum state {
-  Player,
+export enum State {
   Block,
   Item,
   Empty,
 }
 
+export enum Direction {
+  Up,
+  Down,
+  Left,
+  Right,
+}
+
+export const dd: Record<Direction, [dy: number, dx: number]> = {
+  [Direction.Up]: [-1, 0],
+  [Direction.Down]: [1, 0],
+  [Direction.Left]: [0, -1],
+  [Direction.Right]: [0, 1],
+};
+
 export class Cell {
-  y: number;
-  x: number;
-  state: state;
+  state: State;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  value: any;
-  text: string | null;
-  board: board;
-  N: number;
-  M: number;
+  value?: any;
+  text?: string;
   constructor(
-    y: number,
-    x: number,
-    state: state,
+    state: State,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    value: any,
-    text: string | null,
-    board: board,
-    N: number,
-    M: number
+    { value, text }: { value?: any; text?: string } = {}
   ) {
-    this.y = y;
-    this.x = x;
     this.state = state;
     this.value = value;
     this.text = text;
-    this.board = board;
+  }
+
+  copy() {
+    return new Cell(this.state, {
+      value: deepcopyobject(this.value),
+      text: this.text,
+    });
+  }
+}
+
+/**
+ * grid, player을 할당해야 합니다.
+ */
+export class Board {
+  N: number;
+  M: number;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  value?: any;
+  grid: Cell[][];
+  player: { y: number; x: number };
+  target: { y: number; x: number } | null;
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  constructor(N: number, M: number, { value }: { value?: any } = {}) {
     this.N = N;
     this.M = M;
+
+    this.value = value;
+
+    this.grid = Array(N)
+      .fill([])
+      .map(() => Array(M));
+    this.player = { y: -1, x: -1 };
+    this.target = null;
+  }
+
+  get playerCell() {
+    return this.grid[this.player.y][this.player.x];
+  }
+
+  set playerCell(cell) {
+    this.grid[this.player.y][this.player.x] = cell;
   }
 
   canmove(
-    y: number,
-    x: number,
-    c?: (now: Cell, next: Cell) => boolean
-  ): boolean {
-    if (
-      !(
-        (this.y === y && this.x + 1 === x) ||
-        (this.y === y && this.x - 1 === x) ||
-        (this.y + 1 === y && this.x === x) ||
-        (this.y - 1 === y && this.x === x)
-      )
-    )
-      return false;
-    if (!(0 <= y && y < this.N)) return false;
-    if (!(0 <= x && x < this.M)) return false;
-    if (this.board[y][x].state === state.Block) return false;
+    direction: Direction,
+    {
+      start = this.player,
+      c,
+    }: {
+      start?: { y: number; x: number };
+      c?: (now: Cell, next: Cell) => boolean;
+    } = {}
+  ) {
+    const [dy, dx] = dd[direction];
+    const [targety, targetx] = [start.y + dy, start.x + dx];
 
-    if (c) return c(this, this.board[y][x]);
+    if (!(0 <= targety && targety < this.N)) return false;
+    if (!(0 <= targetx && targetx < this.M)) return false;
+
+    const target = this.grid[targety][targetx];
+
+    if (target.state === State.Block) return false;
+
+    if (c) return c(this.playerCell, target);
     return true;
   }
 
-  move(y: number, x: number, cb?: (prev: Cell, now: Cell) => void) {
-    if (this.state !== state.Player) throw new Error("Not player");
+  move(
+    direction: Direction,
+    { cb }: { cb?: (prev: Cell, now: Cell) => void } = {}
+  ) {
+    const prev = this.playerCell;
 
-    this.board[this.y][this.x] = new Cell(
-      this.y,
-      this.x,
-      this.board[y][x].state,
-      this.board[y][x].value,
-      this.board[y][x].text,
-      this.board,
-      this.N,
-      this.M
-    );
+    this.player = {
+      y: this.player.y + dd[direction][0],
+      x: this.player.x + dd[direction][1],
+    };
 
-    this.board[y][x] = new Cell(
-      y,
-      x,
-      this.state,
-      this.value,
-      this.text,
-      this.board,
-      this.N,
-      this.M
-    );
-
-    if (cb) cb(this.board[this.y][this.x], this.board[y][x]);
+    if (cb) cb(prev, this.playerCell);
   }
-}
 
-export type board = Cell[][];
+  bfs(
+    target: (cell: Cell) => boolean,
+    {
+      start = this.player,
+      order = [Direction.Up, Direction.Left, Direction.Right, Direction.Down],
+      c,
+    }: {
+      start?: { y: number; x: number };
+      order?: Direction[];
+      c?: (now: Cell, next: Cell) => boolean;
+    } = {}
+  ): { y: number; x: number; distance: number } | null {
+    const q: { y: number; x: number; distance: number }[] = [];
+    const visit: boolean[][] = Array(this.N)
+      .fill([])
+      .map(() => Array(this.M).fill(false));
 
-export type stepstype = ((board: board) => [board, number])[];
+    q.push({ ...start, distance: 0 });
+    visit[start.y][start.x] = true;
 
-export function deepcopyboard(board: board): board {
-  const res: board = new Array(board.length)
-    .fill([])
-    .map(() => new Array(board[0].length));
+    while (q.length) {
+      const { y, x, distance } = q.shift()!;
+      if (target(this.grid[y][x])) {
+        return { y, x, distance };
+      }
 
-  for (let y = 0; y < board.length; y++) {
-    for (let x = 0; x < board[0].length; x++) {
-      const t = board[y][x];
-      res[y][x] = new Cell(
-        t.y,
-        t.x,
-        t.state,
-        deepcopyobject(t.value),
-        t.text,
-        t.board,
-        t.N,
-        t.M
-      );
+      for (const d of order) {
+        if (!this.canmove(d, { start: { y, x }, c })) continue;
+        if (visit[y + dd[d][0]][x + dd[d][1]]) continue;
+        visit[y + dd[d][0]][x + dd[d][1]] = true;
+
+        q.push({ y: y + dd[d][0], x: x + dd[d][1], distance: distance + 1 });
+      }
     }
+
+    return null;
   }
 
-  return res;
+  getDistance(
+    target: (cell: Cell) => boolean,
+    {
+      start = this.player,
+      c,
+    }: {
+      start?: { y: number; x: number };
+      c?: (now: Cell, next: Cell) => boolean;
+    } = {}
+  ) {
+    const res = this.bfs(target, { start, c });
+
+    if (!res) return null;
+    return res.distance;
+  }
+
+  /**
+   * target으로 최단거리로 가려면 지금 어떤 방향으로 가야 하는지 반환한다.
+   * 각 방향별로 인접한 칸에서 target까지 bfs를 돌려 가장 거리가 짧은 방향을 반환한다.
+   */
+  findDirection(
+    target: (cell: Cell) => boolean,
+    {
+      start = this.player,
+      order = [Direction.Up, Direction.Left, Direction.Right, Direction.Down],
+      c,
+    }: {
+      start?: { y: number; x: number };
+      order?: Direction[];
+      c?: (now: Cell, next: Cell) => boolean;
+    } = {}
+  ): Direction {
+    const moveabledirections = order.filter((d) =>
+      this.canmove(d, { start, c })
+    );
+    moveabledirections.sort((d1, d2) => {
+      const { distance: d1_distance } = this.bfs(target, {
+        start: { y: start.y + dd[d1][0], x: start.x + dd[d1][1] },
+        order,
+        c,
+      })!;
+      const { distance: d2_distance } = this.bfs(target, {
+        start: { y: start.y + dd[d2][0], x: start.x + dd[d2][1] },
+        order,
+        c,
+      })!;
+      return d1_distance - d2_distance; // distance를 기준으로 오름차순 정렬
+    });
+
+    return moveabledirections[0];
+  }
+
+  copy() {
+    const res = new Board(this.N, this.M, this.value);
+
+    for (let y = 0; y < this.N; y++) {
+      for (let x = 0; x < this.M; x++) {
+        res.grid[y][x] = this.grid[y][x].copy();
+      }
+    }
+    res.player = deepcopyobject(this.player);
+    res.target = deepcopyobject(this.target);
+
+    return res;
+  }
 }
+
+export type stepstype = ((board: Board) => [Board, number])[];
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function deepcopyobject(obj: any): any {
@@ -126,18 +231,6 @@ function deepcopyobject(obj: any): any {
   }
 
   return clone;
-}
-
-export function getPlayer(board: board): [y: number, x: number] {
-  for (let y = 0; y < board.length; y++) {
-    for (let x = 0; x < board[0].length; x++) {
-      if (board[y][x].state === state.Player) {
-        return [y, x];
-      }
-    }
-  }
-
-  throw new Error("unreachable");
 }
 
 export type datatype = { name: string; link: string; examples: string[] };

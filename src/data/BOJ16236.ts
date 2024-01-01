@@ -1,4 +1,4 @@
-import { Cell, getPlayer, state, board, stepstype, datatype } from "../utils";
+import { Cell, State, Board, stepstype, datatype, Direction } from "../utils";
 
 export const data: datatype = {
   name: "BOJ 16236 - 아기 상어",
@@ -42,117 +42,83 @@ export const data: datatype = {
 };
 
 export const steps: stepstype = [
-  function (board: board): [board, number] {
-    const [player_y, player_x] = getPlayer(board);
-    const player = board[player_y][player_x];
+  function 탐색(board) {
+    const res = board.bfs(
+      (cell) => cell.state === State.Item && cell.value.size < board.value.size,
+      {
+        order: [Direction.Up, Direction.Left, Direction.Right, Direction.Down],
+        c: (_, next) =>
+          next.state === State.Empty || next.value.size <= board.value.size,
+      }
+    );
 
-    const q: [y: number, x: number][] = [];
-    const visit: boolean[][] = Array(board.length)
-      .fill([])
-      .map(() => Array(board.length).fill(false));
+    if (!res) return [board, -1];
 
-    q.push([player_y, player_x]);
-    visit[player_y][player_x] = true;
+    board.target = res;
+    return [board, 1];
+  },
+  function 이동(board) {
+    const d = board.findDirection(
+      (cell) => cell.state === State.Item && cell.value.size < board.value.size,
+      {
+        order: [Direction.Up, Direction.Left, Direction.Right, Direction.Down],
+        c: (_, next) =>
+          next.state === State.Empty || next.value.size <= board.value.size,
+      }
+    );
 
-    let flag = false;
+    board.move(d);
 
-    while (q.length) {
-      const [y, x] = q.shift()!;
-      if (
-        board[y][x].state === state.Item &&
-        board[y][x].value.size < player.value.size
-      ) {
-        player.value.exp++;
-        if (player.value.size === player.value.exp) {
-          player.value.size++;
-          player.value.exp = 0;
+    // target에 도달했다면
+    if (
+      board.getDistance(
+        (cell) =>
+          cell.state === State.Item && cell.value.size < board.value.size,
+        {
+          c: (_, next) =>
+            next.state === State.Empty || next.value.size <= board.value.size,
         }
-
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        player.move(y, x, (prev, _) => {
-          prev.state = state.Empty;
-          prev.value = { size: 0 };
-          prev.text = null;
-        });
-
-        flag = true;
-
-        break;
-      }
-
-      for (const [yy, xx] of [
-        // 위부터, 왼쪽부터 bfs
-        [y - 1, x],
-        [y, x - 1],
-        [y, x + 1],
-        [y + 1, x],
-      ]) {
-        if (
-          !board[y][x].canmove(
-            yy,
-            xx,
-            (_, next) => player.value.size >= next.value.size
-          )
-        )
-          continue;
-        if (visit[yy][xx]) continue;
-        visit[yy][xx] = true;
-
-        q.push([yy, xx]);
-      }
+      ) === 0
+    ) {
+      return [board, 2];
     }
 
-    if (!flag) {
-      return [board, -1];
+    return [board, 1];
+  },
+  function 성장(board) {
+    board.playerCell = new Cell(State.Empty);
+
+    board.value.exp++;
+    if (board.value.size === board.value.exp) {
+      board.value.size++;
+      board.value.exp = 0;
     }
 
     return [board, 0];
   },
 ];
 
-export const stepNames = ["이동"];
+export const stepNames = ["탐색", "이동", "성장"];
 
-export function parseBoard(s: string): board {
-  const [first, ...remain] = s.split("\n");
-  const [N] = first.split(" ").map(Number);
+export function parseBoard(s: string): Board {
+  const [first, ...remain] = s.split("\n").map((s) => s.split(" ").map(Number));
+  const [N] = first;
 
-  const board: board = new Array(N).fill([]).map(() => new Array(N));
+  const board = new Board(N, N, { value: { size: 2, exp: 0 } });
 
   for (let y = 0; y < N; y++) {
     for (let x = 0; x < N; x++) {
-      if (+remain[y].split(" ")[x] === 9)
-        board[y][x] = new Cell(
-          y,
-          x,
-          state.Player,
-          { size: 2, exp: 0 },
-          null,
-          board,
-          N,
-          N
-        );
-      else if (+remain[y].split(" ")[x] === 0)
-        board[y][x] = new Cell(
-          y,
-          x,
-          state.Empty,
-          { size: 0 },
-          null,
-          board,
-          N,
-          N
-        );
-      else
-        board[y][x] = new Cell(
-          y,
-          x,
-          state.Item,
-          { size: +remain[y].split(" ")[x] },
-          remain[y].split(" ")[x],
-          board,
-          N,
-          N
-        );
+      if (remain[y][x] === 9) {
+        board.grid[y][x] = new Cell(State.Empty);
+        board.player = { y, x };
+      } else if (remain[y][x] === 0) {
+        board.grid[y][x] = new Cell(State.Empty);
+      } else {
+        board.grid[y][x] = new Cell(State.Item, {
+          value: { size: remain[y][x] },
+          text: remain[y][x].toString(),
+        });
+      }
     }
   }
 

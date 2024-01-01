@@ -1,22 +1,20 @@
-import { board, datatype, state, stepstype } from "../utils";
+import { Board, datatype, State, stepstype } from "../utils";
 
-export const style: Record<state, string> = {
-  [state.Player]: "bg-red-300",
-  [state.Block]: "bg-gray-800 text-white",
-  [state.Item]: "bg-gray-500 text-white",
-  [state.Empty]: "",
+export const style: Record<State, string> = {
+  [State.Block]: "bg-gray-800 text-white",
+  [State.Item]: "bg-gray-500 text-white",
+  [State.Empty]: "",
 };
 
-export const text: Record<state, string> = {
-  [state.Player]: "P",
-  [state.Block]: "X",
-  [state.Item]: "O",
-  [state.Empty]: ".",
+export const text: Record<State, string> = {
+  [State.Block]: "X",
+  [State.Item]: "O",
+  [State.Empty]: ".",
 };
 
 export type simulation = {
   data: datatype;
   steps: stepstype;
   stepNames: string[];
-  parseBoard: (s: string) => board;
+  parseBoard: (s: string) => Board;
 };
