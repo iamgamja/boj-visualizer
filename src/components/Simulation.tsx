@@ -3,6 +3,7 @@ import SelectInputSideBar from "./SelectInputSideBar";
 import ShowProgressSideBar from "./ShowProgressSideBar";
 import { Board, datatype, stepstype } from "../utils";
 import { style, text } from "../constants/const";
+import target from "../assets/target.svg";
 
 export default function Simulation({
   data,
@@ -71,7 +72,7 @@ export default function Simulation({
               <div key={y}>
                 {line.map((cell, x) => (
                   <div
-                    className={`inline-flex items-center justify-center size-10 border-[1px] border-black ${
+                    className={`inline-flex items-center justify-center size-10 border-[1px] border-black relative ${
                       y === boardHistory[showingBoard].player.y &&
                       x === boardHistory[showingBoard].player.x
                         ? "bg-red-300"
@@ -83,11 +84,20 @@ export default function Simulation({
                     x === boardHistory[showingBoard].player.x
                       ? "P"
                       : cell.text ?? text[cell.state]}
+
+                    {/* 타겟 */}
+                    {y === boardHistory[showingBoard].target?.y &&
+                      x === boardHistory[showingBoard].target?.x && (
+                        <div className="absolute">
+                          <img src={target} />
+                        </div>
+                      )}
                   </div>
                 ))}
               </div>
             ))}
         </main>
+
         {isrunning ? (
           <ShowProgressSideBar
             history={stepHistory}

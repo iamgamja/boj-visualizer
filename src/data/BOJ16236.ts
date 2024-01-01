@@ -80,6 +80,7 @@ export const steps: stepstype = [
         }
       ) === 0
     ) {
+      board.target = null;
       return [board, 2];
     }
 
