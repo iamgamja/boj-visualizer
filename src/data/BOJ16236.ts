@@ -68,6 +68,7 @@ export const steps: stepstype = [
     );
 
     board.move(d);
+    board.value.T++;
 
     // target에 도달했다면
     if (
@@ -106,8 +107,9 @@ export function parseBoard(s: string): Board {
   const [N] = first;
 
   const board = new Board(N, N, {
-    value: { size: 2, exp: 0 },
-    text: (board) => `size: ${board.value.size}\nexp: ${board.value.exp}`,
+    value: { size: 2, exp: 0, T: 0 },
+    text: (board) =>
+      `T: ${board.value.T}\nsize: ${board.value.size}\nexp: ${board.value.exp}`,
   });
 
   for (let y = 0; y < N; y++) {
