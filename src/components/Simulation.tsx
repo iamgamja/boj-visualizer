@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import SelectInputSideBar from "./SelectInputSideBar";
 import ShowProgressSideBar from "./ShowProgressSideBar";
-import { board, datatype, deepcopyboard, stepstype } from "../utils";
+import { Board, datatype, stepstype } from "../utils";
 import { style, text } from "../constants/const";
 
 export default function Simulation({
@@ -13,10 +13,10 @@ export default function Simulation({
   data: datatype;
   steps: stepstype;
   stepNames: string[];
-  parseBoard: (s: string) => board;
+  parseBoard: (s: string) => Board;
 }) {
   const [isrunning, setIsrunning] = useState(false);
-  const [boardHistory, setBoardHistory] = useState<board[]>([]);
+  const [boardHistory, setBoardHistory] = useState<Board[]>([]);
   const [stepHistory, setStepHistory] = useState<number[]>([]);
   const [showingBoard, setShowingBoard] = useState<number>(0);
 
@@ -27,13 +27,13 @@ export default function Simulation({
     // 먼저 시뮬레이션을 한다
     // 1000번 이상 반복할 경우 무한 루프로 판단하고 중지한다.
     let board = parseBoard(s);
-    const boardHistory: board[] = [deepcopyboard(board)];
+    const boardHistory: Board[] = [board.copy()];
     const stepHistory: number[] = [-1];
     let step = 0;
     while (boardHistory.length <= 1000) {
       const laststep = step;
       [board, step] = steps[step](board);
-      boardHistory.push(deepcopyboard(board));
+      boardHistory.push(board.copy());
       stepHistory.push(laststep);
 
       if (step === -1) break;
@@ -67,16 +67,22 @@ export default function Simulation({
       <div className="h-full flex flex-row">
         <main className="flex-auto bg-green-200">
           {isrunning &&
-            boardHistory[showingBoard].map((line, idx1) => (
+            boardHistory[showingBoard].grid.map((line, y) => (
               <div>
-                {line.map((cell, idx2) => (
+                {line.map((cell, x) => (
                   <div
                     className={`inline-flex items-center justify-center size-10 border-[1px] border-black ${
-                      style[cell.state]
+                      y === boardHistory[showingBoard].player.y &&
+                      x === boardHistory[showingBoard].player.x
+                        ? "bg-red-300"
+                        : style[cell.state]
                     }`}
-                    key={`${idx1} ${idx2}`}
+                    key={`${y} ${x}`}
                   >
-                    {cell.text ?? text[cell.state]}
+                    {y === boardHistory[showingBoard].player.y &&
+                    x === boardHistory[showingBoard].player.x
+                      ? "P"
+                      : cell.text ?? text[cell.state]}
                   </div>
                 ))}
               </div>
