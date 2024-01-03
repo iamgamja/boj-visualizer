@@ -1,9 +1,3 @@
-export enum State {
-  Block,
-  Item,
-  Empty,
-}
-
 export enum Direction {
   Up,
   Down,
@@ -19,24 +13,21 @@ export const dd: Record<Direction, [dy: number, dx: number]> = {
 };
 
 export class Cell {
-  state: State;
+  type: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   value?: any;
-  text?: string;
   constructor(
-    state: State,
+    type: string,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    { value, text }: { value?: any; text?: string } = {}
+    { value }: { value?: any } = {}
   ) {
-    this.state = state;
+    this.type = type;
     this.value = value;
-    this.text = text;
   }
 
   copy() {
-    return new Cell(this.state, {
+    return new Cell(this.type, {
       value: deepcopyobject(this.value),
-      text: this.text,
     });
   }
 }
@@ -101,8 +92,6 @@ export class Board {
     if (!(0 <= targetx && targetx < this.M)) return false;
 
     const target = this.grid[targety][targetx];
-
-    if (target.state === State.Block) return false;
 
     if (c) return c(this.playerCell, target);
     return true;
@@ -246,3 +235,22 @@ function deepcopyobject(obj: any): any {
 }
 
 export type datatype = { name: string; link: string; examples: string[] };
+
+export type styletype = Record<
+  string,
+  {
+    backgroundColor: string;
+    textColor: string;
+    text: ({
+      cell,
+      board,
+      y,
+      x,
+    }: {
+      cell: Cell;
+      board: Board;
+      y: number;
+      x: number;
+    }) => string;
+  }
+>;

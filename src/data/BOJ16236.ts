@@ -1,4 +1,6 @@
-import { Cell, State, Board, stepstype, datatype, Direction } from "../utils";
+/** @todo 수정 */
+
+import { Cell, Board, stepstype, datatype, Direction } from "../utils";
 
 export const data: datatype = {
   name: "BOJ 16236 - 아기 상어",
@@ -44,11 +46,11 @@ export const data: datatype = {
 export const steps: stepstype = [
   function 탐색(board) {
     const res = board.bfs(
-      (cell) => cell.state === State.Item && cell.value.size < board.value.size,
+      (cell) => cell.type === "Item" && cell.value.size < board.value.size,
       {
         order: [Direction.Up, Direction.Left, Direction.Right, Direction.Down],
         c: (_, next) =>
-          next.state === State.Empty || next.value.size <= board.value.size,
+          next.type === "Empty" || next.value.size <= board.value.size,
       }
     );
 
@@ -59,11 +61,11 @@ export const steps: stepstype = [
   },
   function 이동(board) {
     const d = board.findDirection(
-      (cell) => cell.state === State.Item && cell.value.size < board.value.size,
+      (cell) => cell.type === "Item" && cell.value.size < board.value.size,
       {
         order: [Direction.Up, Direction.Left, Direction.Right, Direction.Down],
         c: (_, next) =>
-          next.state === State.Empty || next.value.size <= board.value.size,
+          next.type === "Empty" || next.value.size <= board.value.size,
       }
     );
 
@@ -73,11 +75,10 @@ export const steps: stepstype = [
     // target에 도달했다면
     if (
       board.getDistance(
-        (cell) =>
-          cell.state === State.Item && cell.value.size < board.value.size,
+        (cell) => cell.type === "Item" && cell.value.size < board.value.size,
         {
           c: (_, next) =>
-            next.state === State.Empty || next.value.size <= board.value.size,
+            next.type === "Empty" || next.value.size <= board.value.size,
         }
       ) === 0
     ) {
@@ -88,7 +89,7 @@ export const steps: stepstype = [
     return [board, 1];
   },
   function 성장(board) {
-    board.playerCell = new Cell(State.Empty);
+    board.playerCell = new Cell("Empty");
 
     board.value.exp++;
     if (board.value.size === board.value.exp) {
@@ -115,12 +116,12 @@ export function parseBoard(s: string): Board {
   for (let y = 0; y < N; y++) {
     for (let x = 0; x < N; x++) {
       if (remain[y][x] === 9) {
-        board.grid[y][x] = new Cell(State.Empty);
+        board.grid[y][x] = new Cell("Empty");
         board.player = { y, x };
       } else if (remain[y][x] === 0) {
-        board.grid[y][x] = new Cell(State.Empty);
+        board.grid[y][x] = new Cell("Empty");
       } else {
-        board.grid[y][x] = new Cell(State.Item, {
+        board.grid[y][x] = new Cell("Item", {
           value: { size: remain[y][x] },
           text: remain[y][x].toString(),
         });

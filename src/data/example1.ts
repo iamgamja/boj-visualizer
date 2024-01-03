@@ -1,4 +1,11 @@
-import { Cell, State, Board, stepstype, datatype, Direction } from "../utils";
+import {
+  Cell,
+  Board,
+  stepstype,
+  datatype,
+  Direction,
+  styletype,
+} from "../utils";
 
 /*
 다음과 같은 문제를 구현한다:
@@ -26,14 +33,38 @@ export const data: datatype = {
   ],
 };
 
+export const style: styletype = {
+  Player: {
+    backgroundColor: "bg-red-300",
+    textColor: "text-black",
+    text: () => "P",
+  },
+  Wall: {
+    backgroundColor: "bg-gray-800",
+    textColor: "text-white",
+    text: () => "X",
+  },
+  Empty: {
+    backgroundColor: "bg-green-200",
+    textColor: "text-black",
+    text: () => ".",
+  },
+};
+
 export const steps: stepstype = [
   function (board) {
-    if (board.canmove(Direction.Right)) {
+    if (
+      board.canmove(Direction.Right, {
+        c: (now, next) => next.type === "Empty",
+      })
+    ) {
       board.move(Direction.Right);
       return [board, 0];
     }
 
-    if (board.canmove(Direction.Down)) {
+    if (
+      board.canmove(Direction.Down, { c: (now, next) => next.type === "Empty" })
+    ) {
       board.move(Direction.Down);
       return [board, 0];
     }
@@ -53,13 +84,13 @@ export function parseBoard(s: string): Board {
   for (let y = 0; y < N; y++) {
     for (let x = 0; x < M; x++) {
       if (y == 0 && x == 0) {
-        board.grid[y][x] = new Cell(State.Empty);
+        board.grid[y][x] = new Cell("Empty");
         board.player = { y, x };
       } else if (remain[y][x] == ".") {
-        board.grid[y][x] = new Cell(State.Empty);
+        board.grid[y][x] = new Cell("Empty");
       } else {
         // X
-        board.grid[y][x] = new Cell(State.Block);
+        board.grid[y][x] = new Cell("Wall");
       }
     }
   }

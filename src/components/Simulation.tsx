@@ -1,21 +1,11 @@
 import { useEffect, useState } from "react";
 import SelectInputSideBar from "./SelectInputSideBar";
 import ShowProgressSideBar from "./ShowProgressSideBar";
-import { Board, datatype, stepstype } from "../utils";
-import { style, text } from "../constants/const";
+import { Board } from "../utils";
 import target from "../assets/target.svg";
+import { simulation } from "../constants/const";
 
-export default function Simulation({
-  data,
-  steps,
-  stepNames,
-  parseBoard,
-}: {
-  data: datatype;
-  steps: stepstype;
-  stepNames: string[];
-  parseBoard: (s: string) => Board;
-}) {
+export default function Simulation({ simulation }: { simulation: simulation }) {
   const [isrunning, setIsrunning] = useState(false);
   const [boardHistory, setBoardHistory] = useState<Board[]>([]);
   const [stepHistory, setStepHistory] = useState<number[]>([]);
@@ -28,13 +18,13 @@ export default function Simulation({
 
     // 먼저 시뮬레이션을 한다
     // 1000번 이상 반복할 경우 무한 루프로 판단하고 중지한다.
-    let board = parseBoard(s);
+    let board = simulation.parseBoard(s);
     const boardHistory: Board[] = [board.copy()];
     const stepHistory: number[] = [-1];
     let step = 0;
     while (boardHistory.length <= 1000) {
       const laststep = step;
-      [board, step] = steps[step](board);
+      [board, step] = simulation.steps[step](board);
       boardHistory.push(board.copy());
       stepHistory.push(laststep);
 
@@ -82,15 +72,25 @@ export default function Simulation({
                     className={`inline-flex items-center justify-center size-10 border-[1px] border-black relative ${
                       y === boardHistory[showingBoard].player.y &&
                       x === boardHistory[showingBoard].player.x
-                        ? "bg-red-300"
-                        : style[cell.state]
+                        ? simulation.style["Player"].backgroundColor
+                        : simulation.style[cell.type].backgroundColor
+                    } ${
+                      y === boardHistory[showingBoard].player.y &&
+                      x === boardHistory[showingBoard].player.x
+                        ? simulation.style["Player"].textColor
+                        : simulation.style[cell.type].textColor
                     }`}
                     key={`${y} ${x}`}
                   >
                     {y === boardHistory[showingBoard].player.y &&
                     x === boardHistory[showingBoard].player.x
                       ? "P"
-                      : cell.text ?? text[cell.state]}
+                      : simulation.style[cell.type].text({
+                          cell,
+                          board: boardHistory[showingBoard],
+                          y,
+                          x,
+                        })}
 
                     {/* 타겟 */}
                     {y === boardHistory[showingBoard].target?.y &&
@@ -114,13 +114,16 @@ export default function Simulation({
         {isrunning ? (
           <ShowProgressSideBar
             history={stepHistory}
-            stepNames={stepNames}
+            stepNames={simulation.stepNames}
             selected={showingBoard}
             onStop={onStop}
             onClickShow={(idx) => setShowingBoard(idx)}
           />
         ) : (
-          <SelectInputSideBar examples={data.examples} onRun={onRun} />
+          <SelectInputSideBar
+            examples={simulation.data.examples}
+            onRun={onRun}
+          />
         )}
       </div>
     </>

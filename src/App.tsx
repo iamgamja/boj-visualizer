@@ -24,12 +24,7 @@ export default function App() {
   if (name && name in simulations.current) {
     return (
       <>
-        <Simulation
-          data={simulations.current[name].data}
-          steps={simulations.current[name].steps}
-          stepNames={simulations.current[name].stepNames}
-          parseBoard={simulations.current[name].parseBoard}
-        />
+        <Simulation simulation={simulations.current[name]} />
       </>
     );
   }
