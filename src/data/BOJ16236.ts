@@ -1,6 +1,13 @@
 /** @todo 수정 */
 
-import { Cell, Board, stepstype, datatype, Direction } from "../utils";
+import {
+  Cell,
+  Board,
+  stepstype,
+  datatype,
+  Direction,
+  styletype,
+} from "../utils";
 
 export const data: datatype = {
   name: "BOJ 16236 - 아기 상어",
@@ -41,6 +48,24 @@ export const data: datatype = {
 0 0 0 0 0 6
 0 0 0 0 0 9`,
   ],
+};
+
+export const style: styletype = {
+  Player: {
+    backgroundColor: "bg-red-300",
+    textColor: "text-black",
+    text: () => "P",
+  },
+  Item: {
+    backgroundColor: "bg-gray-500",
+    textColor: "text-black",
+    text: ({ cell }) => `${cell.value.size}`,
+  },
+  Empty: {
+    backgroundColor: "bg-green-200",
+    textColor: "text-black",
+    text: () => ".",
+  },
 };
 
 export const steps: stepstype = [
@@ -123,7 +148,6 @@ export function parseBoard(s: string): Board {
       } else {
         board.grid[y][x] = new Cell("Item", {
           value: { size: remain[y][x] },
-          text: remain[y][x].toString(),
         });
       }
     }
