@@ -55,7 +55,7 @@ export const steps: stepstype = [
   function (board) {
     if (
       board.canmove(Direction.Right, {
-        c: (now, next) => next.type === "Empty",
+        c: (_, next) => next.type === "Empty",
       })
     ) {
       board.move(Direction.Right);
@@ -63,7 +63,7 @@ export const steps: stepstype = [
     }
 
     if (
-      board.canmove(Direction.Down, { c: (now, next) => next.type === "Empty" })
+      board.canmove(Direction.Down, { c: (_, next) => next.type === "Empty" })
     ) {
       board.move(Direction.Down);
       return [board, 0];
